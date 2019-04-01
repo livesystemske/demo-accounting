@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Demo.Accounting.Domain.Invoices.Events;
@@ -7,16 +8,20 @@ namespace Demo.Accounting.ConsoleApp
 {
     public class ProcessInvoiceEventHandler:INotificationHandler<InvoiceGenerated>,INotificationHandler<PaymentReceiptGenerated>
     {
-        public Task Handle(InvoiceGenerated notification, CancellationToken cancellationToken)
+        public async Task Handle(InvoiceGenerated notification, CancellationToken cancellationToken)
         {
-            Program.BusControl.Publish<InvoiceGenerated>(notification);
-            return Task.CompletedTask;
+            var sendToUri = new Uri("rabbitmq://localhost/generate_invoice_queuex");
+            var endPoint = await Program.BusControl.GetSendEndpoint(sendToUri);
+
+            await endPoint.Send(notification);
         }
 
-        public Task Handle(PaymentReceiptGenerated notification, CancellationToken cancellationToken)
+        public async Task Handle(PaymentReceiptGenerated notification, CancellationToken cancellationToken)
         {
-            Program.BusControl.Publish<PaymentReceiptGenerated>(notification);
-            return Task.CompletedTask;
+            var sendToUri = new Uri("rabbitmq://localhost/generate_invoice_queuex");
+            var endPoint = await Program.BusControl.GetSendEndpoint(sendToUri);
+
+            await endPoint.Send(notification);
         }
     }
 }

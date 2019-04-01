@@ -61,7 +61,7 @@ namespace Demo.Accounting.ConsoleApp
                     h.Password(Configuration["RabbitMQ:password"]);
                 });
 
-                cfg.ReceiveEndpoint(host, "generate_invoice_queue", e =>
+                cfg.ReceiveEndpoint(host, "generate_invoice_queuex", e =>
                 {
                     e.Consumer<GenerateInvoiceConsumer>();
                 });
